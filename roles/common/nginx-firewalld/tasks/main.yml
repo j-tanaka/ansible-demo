@@ -1,0 +1,15 @@
+---
+
+- name: firewalld open http service
+  firewalld:
+    immediate: yes
+    permanent: yes
+    service: http
+    state: enabled
+
+- name: firewalld open https service
+  firewalld:
+    immediate: yes
+    permanent: yes
+    service: https
+    state: enabled

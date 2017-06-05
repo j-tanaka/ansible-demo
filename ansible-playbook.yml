@@ -1,0 +1,15 @@
+---
+
+- name: Install lambda package
+
+  - name: clone repository
+
+  - name: zip package
+
+  - name: create role
+
+  - name: attach policy to role
+
+  - name: deploy lambda package
+
+  - name: 
