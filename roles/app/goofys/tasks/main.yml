@@ -1,0 +1,87 @@
+---
+
+- name: install golang
+  yum:
+    name: golang
+    state: removed
+
+- name: create directory
+  file:
+    path: /tmp/.golang-install
+    state: directory
+
+- name: download golang ver1.8
+  get_url:
+    url: https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
+    dest: /tmp/.golang-install/go1.8.3.linux-amd64.tar.gz
+
+- name: unpack and install golang
+  shell: tar -C /usr/local -xzf /tmp/.golang-install/go1.8.3.linux-amd64.tar.gz
+
+- name: install fuse
+  yum:
+    name: fuse
+    state: installed
+
+- name: download and install goofys
+  get_url:
+    url: https://github.com/kahing/goofys/releases/download/v0.0.13/goofys
+    dest: /usr/local/bin/goofys
+    mode: 0755
+
+#- name: download goofys
+#  shell: go get github.com/kahing/goofys
+#  environment:
+#    PATH: "/usr/local/go/bin:{{ansible_env.PATH}}"
+
+#- name: install goofys
+#  shell: go install github.com/kahing/goofys
+#  environment:
+#    PATH: "/usr/local/go/bin:{{ansible_env.PATH}}"
+
+- name: write default on .aws/credentials
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/credentials"
+    mode: 0600
+    create: yes
+    regexp: '^\[default\]'
+    line: '[default]'
+
+- name: write AWS_ACCESS_KEY_ID on .aws/credentials
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/credentials"
+    state: present
+    regexp: '^aws_access_key_id ='
+    line: "aws_access_key_id = {{aws_access_key_id}}"
+
+- name: write AWS_SECRET_ACCESS_KEY on .aws/credentails
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/credentials"
+    state: present
+    regexp: '^aws_secret_access_key ='
+    line: "aws_secret_access_key = {{aws_secret_access_key}}"
+
+- name: write default on .aws/config
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/config"
+    mode: 0600
+    create: yes
+    regexp: '^\[default\]'
+    line: '[default]'
+
+- name: write AWS_DEFAULT_REGION on .aws/config
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/config"
+    state: present
+    insertafter: '\[default\]'
+    regexp: '^region ='
+    line: "region = {{aws_default_region}}"
+
+- name: write AWS_DEFAULT_OUTPUT on .aws/config
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/config"
+    state: present
+    insertafter: '\[default\]'
+    regexp: '^output ='
+    line: "output = json"
+

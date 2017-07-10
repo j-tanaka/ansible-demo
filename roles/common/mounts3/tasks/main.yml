@@ -1,0 +1,14 @@
+---
+
+- name: write fstab to mount automatically
+#  lineinfile:
+#    dest: /etc/fstab
+#    state: present
+#    regexp: '^\/usr\/local\/bin\/goofys'
+#    line:  "/usr/local/bin/goofys#{{aws_s3_budget_name}} /mnt/goofys fuse _netdev,allow_other,--uid=1001,--gid=1001 0 0"
+  mount:
+    src: "/usr/local/bin/goofys#{{aws_s3_bugget_name}}"
+    name: /mnt/goofys
+    fstype: fuse
+    state: mounted
+    opts: _netdev,allow_other,--uid=1001,--gid=1001
