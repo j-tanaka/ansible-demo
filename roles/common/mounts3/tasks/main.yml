@@ -1,11 +1,52 @@
 ---
 
-- name: write fstab to mount automatically
-#  lineinfile:
-#    dest: /etc/fstab
-#    state: present
-#    regexp: '^\/usr\/local\/bin\/goofys'
-#    line:  "/usr/local/bin/goofys#{{aws_s3_budget_name}} /mnt/goofys fuse _netdev,allow_other,--uid=1001,--gid=1001 0 0"
+- name: write default on .aws/credentials
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/credentials"
+    mode: 0600
+    create: yes
+    regexp: '^\[default\]'
+    line: '[default]'
+
+- name: write AWS_ACCESS_KEY_ID on .aws/credentials
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/credentials"
+    state: present
+    regexp: '^aws_access_key_id ='
+    line: "aws_access_key_id = {{aws_access_key_id}}"
+
+- name: write AWS_SECRET_ACCESS_KEY on .aws/credentails
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/credentials"
+    state: present
+    regexp: '^aws_secret_access_key ='
+    line: "aws_secret_access_key = {{aws_secret_access_key}}"
+
+- name: write default on .aws/config
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/config"
+    mode: 0600
+    create: yes
+    regexp: '^\[default\]'
+    line: '[default]'
+
+- name: write AWS_DEFAULT_REGION on .aws/config
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/config"
+    state: present
+    insertafter: '\[default\]'
+    regexp: '^region ='
+    line: "region = {{aws_default_region}}"
+
+- name: write AWS_DEFAULT_OUTPUT on .aws/config
+  lineinfile:
+    dest: "{{ansible_env.HOME}}/.aws/config"
+    state: present
+    insertafter: '\[default\]'
+    regexp: '^output ='
+    line: "output = json"
+
+- name: write fstab and mount automatically
   mount:
     src: "/usr/local/bin/goofys#{{aws_s3_bugget_name}}"
     name: /mnt/goofys
